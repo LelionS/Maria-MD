@@ -7,12 +7,14 @@ const NodeCache = require('node-cache');
 const readline = require('readline');
 const qrcode = require('qrcode-terminal');
 
-const { default: makeWASocket, initInMemoryStore, useMultiFileAuthState, fetchLatestBaileysVersion, jidDecode, proto, makeCacheableSignalKeyStore, downloadContentFromMessage } = require("@whiskeysockets/baileys");
-const { smsg } = require('./Gallery/lib/myfunc'); // Your helper functions
+const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, jidDecode, proto, makeCacheableSignalKeyStore, downloadContentFromMessage } = require("@whiskeysockets/baileys");
+const { makeInMemoryStore } = require("@naanzitos/baileys-make-in-memory-store"); // ✅ fixed store
+
+const { smsg } = require('./Gallery/lib/myfunc'); // your helper functions
 const { writeExifImg, writeExifVid, imageToWebp, videoToWebp } = require('./Gallery/lib/exif');
 
 // -------------------- CONFIG --------------------
-const store = initInMemoryStore({ logger: pino().child({ level: 'silent' }) });
+const store = makeInMemoryStore({ logger: pino().child({ level: 'silent' }) });
 const msgRetryCounterCache = new NodeCache(); // Retry message cache
 
 // Read owner info
