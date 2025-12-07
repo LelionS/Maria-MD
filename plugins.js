@@ -6,12 +6,13 @@ const chalk = require('chalk');
 const NodeCache = require('node-cache');
 const readline = require('readline');
 const qrcode = require('qrcode-terminal');
-const { default: makeWASocket, makeInMemoryStore, useMultiFileAuthState, fetchLatestBaileysVersion, jidDecode, proto, makeCacheableSignalKeyStore, downloadContentFromMessage } = require("@whiskeysockets/baileys");
+
+const { default: makeWASocket, initInMemoryStore, useMultiFileAuthState, fetchLatestBaileysVersion, jidDecode, proto, makeCacheableSignalKeyStore, downloadContentFromMessage } = require("@whiskeysockets/baileys");
 const { smsg } = require('./Gallery/lib/myfunc'); // Your helper functions
 const { writeExifImg, writeExifVid, imageToWebp, videoToWebp } = require('./Gallery/lib/exif');
 
 // -------------------- CONFIG --------------------
-const store = makeInMemoryStore({ logger: pino().child({ level: 'silent' }) });
+const store = initInMemoryStore({ logger: pino().child({ level: 'silent' }) });
 const msgRetryCounterCache = new NodeCache(); // Retry message cache
 
 // Read owner info
@@ -19,7 +20,7 @@ let owner = JSON.parse(fs.readFileSync('./Gallery/database/owner.json'));
 
 // Readline for pairing code (optional)
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-const question = (text) => new Promise((resolve) => rl.question(text, resolve));
+const question = (text) => new Promise(resolve => rl.question(text, resolve));
 
 // -------------------- START BOT --------------------
 async function startMaria() {
@@ -67,7 +68,6 @@ async function startMaria() {
             mek.message = Object.keys(mek.message)[0] === 'ephemeralMessage' ? mek.message.ephemeralMessage.message : mek.message;
 
             const m = smsg(Maria, mek, store);
-            // Call your Heart handler
             require("./Heart")(Maria, m, chatUpdate, store);
         } catch (err) {
             console.log("Error handling message:", err);
